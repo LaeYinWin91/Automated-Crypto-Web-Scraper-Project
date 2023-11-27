@@ -1,0 +1,35 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+import os
+from datetime import datetime
+import time
+def automated_crypto_pull():
+
+    url = 'https://coinmarketcap.com/currencies/bitcoin/'
+
+    page = requests.get (url)
+
+    soup = BeautifulSoup (page.text, 'html')
+    crypto_name= soup.find ('span', class_ = 'coin-name-pc').text
+    crypto_price= soup.find ('span',class_ = 'sc-f70bb44c-0 jxpCgO base-text').text
+    final_price = crypto_price.replace ('$','')
+    date_time= datetime.now()
+
+    dict = {'Crypto Name':crypto_name,
+               'Crypto Price':final_price,
+               'TimeStamp':date_time}
+
+    df = pd.DataFrame ([dict])
+
+    df
+
+    if os.path.exists (r'E:\Data analysis\Python project\Automated_crytpo.csv'):
+        df.to_csv(r'E:\Data analysis\Python project\Automated_crytpo.csv', mode='a', header = False, index= False)
+
+    else:
+        df.to_csv(r'E:\Data analysis\Python project\Automated_crytpo.csv', index = False)
+    print (df)
+while True:
+    automated_crypto_pull()
+    time.sleep (3600)
